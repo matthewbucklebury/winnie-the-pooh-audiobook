@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Winnie the Pooh</title>
+  <link rel="icon" type="image/png" href="https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/Favicon.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Winnie the Pooh">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#2D5F2D">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #FFFFFF;
+      color: #1a1a1a;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 24px 16px 32px;
+      overflow-x: hidden;
+    }
+
+    .player-card {
+      background: #FAFAF7;
+      border-radius: 20px;
+      box-shadow: 0 4px 24px rgba(45, 95, 45, 0.10);
+      padding: 28px 20px 24px;
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+
+    /* Cover Art */
+    .cover-art {
+      width: 65%;
+      max-width: 260px;
+      aspect-ratio: 1;
+      border-radius: 16px;
+      box-shadow: 0 6px 24px rgba(45, 95, 45, 0.18), 0 2px 8px rgba(0,0,0,0.10);
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Title */
+    .book-title {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #2D5F2D;
+      text-align: center;
+      line-height: 1.2;
+    }
+
+    /* Dedication */
+    .dedication {
+      font-family: 'Libre Baskerville', Georgia, serif;
+      font-style: italic;
+      font-size: 0.82rem;
+      color: #2D5F2D;
+      text-align: center;
+      opacity: 0.85;
+      line-height: 1.5;
+      padding: 0 8px;
+    }
+
+    /* Chapter display */
+    .chapter-display {
+      text-align: center;
+      padding: 10px 12px;
+      background: #F0F5F0;
+      border-radius: 10px;
+      width: 100%;
+    }
+
+    .chapter-number {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #2D5F2D;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+
+    .chapter-title {
+      font-size: 0.85rem;
+      color: #2a2a2a;
+      line-height: 1.4;
+    }
+
+    /* Resume notice */
+    .resume-notice {
+      font-size: 0.75rem;
+      color: #2D5F2D;
+      text-align: center;
+      opacity: 0;
+      transition: opacity 0.4s;
+      height: 0;
+      overflow: hidden;
+    }
+
+    .resume-notice.visible {
+      opacity: 1;
+      height: auto;
+    }
+
+    /* Progress bar */
+    .progress-section {
+      width: 100%;
+    }
+
+    .time-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: #666;
+      margin-bottom: 6px;
+    }
+
+    .progress-bar-container {
+      position: relative;
+      height: 6px;
+      background: #DDE8DD;
+      border-radius: 3px;
+      cursor: pointer;
+      touch-action: none;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: #2D5F2D;
+      border-radius: 3px;
+      width: 0%;
+      pointer-events: none;
+      transition: width 0.1s linear;
+    }
+
+    .progress-thumb {
+      position: absolute;
+      top: 50%;
+      left: 0%;
+      transform: translate(-50%, -50%);
+      width: 16px;
+      height: 16px;
+      background: #2D5F2D;
+      border-radius: 50%;
+      box-shadow: 0 1px 4px rgba(45,95,45,0.3);
+      pointer-events: none;
+      transition: left 0.1s linear;
+    }
+
+    /* Playback controls */
+    .controls-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .ctrl-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: #2D5F2D;
+      padding: 8px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .ctrl-btn:active {
+      background: rgba(45, 95, 45, 0.12);
+      transform: scale(0.93);
+    }
+
+    .ctrl-btn.play-pause {
+      background: #2D5F2D;
+      color: #fff;
+      width: 60px;
+      height: 60px;
+      box-shadow: 0 3px 12px rgba(45, 95, 45, 0.35);
+    }
+
+    .ctrl-btn.play-pause:active {
+      background: #245024;
+      transform: scale(0.94);
+    }
+
+    /* Volume */
+    .volume-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .volume-icon {
+      color: #2D5F2D;
+      flex-shrink: 0;
+    }
+
+    .volume-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      flex: 1;
+      height: 4px;
+      background: #DDE8DD;
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .volume-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #2D5F2D;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(45,95,45,0.3);
+    }
+
+    .volume-slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      background: #2D5F2D;
+      border-radius: 50%;
+      cursor: pointer;
+      border: none;
+      box-shadow: 0 1px 4px rgba(45,95,45,0.3);
+    }
+
+    /* Repeat toggle */
+    .repeat-btn {
+      background: none;
+      border: 1.5px solid #DDE8DD;
+      border-radius: 20px;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 0.78rem;
+      color: #888;
+      transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .repeat-btn.active {
+      border-color: #2D5F2D;
+      color: #2D5F2D;
+      background: #F0F5F0;
+    }
+
+    .repeat-btn svg {
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="player-card">
+
+  <img class="cover-art" src="https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/Favicon.png" alt="Winnie the Pooh cover art">
+
+  <h1 class="book-title">Winnie the Pooh</h1>
+
+  <p class="dedication">To my beautiful wife, I hope this audiobook brings you peace and happiness.</p>
+
+  <div id="resumeNotice" class="resume-notice"></div>
+
+  <div class="chapter-display">
+    <div class="chapter-number" id="chapterNumber">Chapter 1</div>
+    <div class="chapter-title" id="chapterTitle">Loading…</div>
+  </div>
+
+  <div class="progress-section">
+    <div class="time-row">
+      <span id="timeElapsed">0:00</span>
+      <span id="timeDuration">0:00</span>
+    </div>
+    <div class="progress-bar-container" id="progressBar">
+      <div class="progress-fill" id="progressFill"></div>
+      <div class="progress-thumb" id="progressThumb"></div>
+    </div>
+  </div>
+
+  <div class="controls-row">
+    <!-- Previous chapter -->
+    <button class="ctrl-btn" id="btnPrev" aria-label="Previous chapter">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/>
+      </svg>
+    </button>
+
+    <!-- Rewind 15s -->
+    <button class="ctrl-btn" id="btnRewind" aria-label="Rewind 15 seconds">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/>
+        <text x="12" y="14.5" text-anchor="middle" font-size="5.5" font-family="sans-serif" font-weight="bold" fill="currentColor">15</text>
+      </svg>
+    </button>
+
+    <!-- Play/Pause -->
+    <button class="ctrl-btn play-pause" id="btnPlayPause" aria-label="Play">
+      <svg id="iconPlay" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8 5v14l11-7z"/>
+      </svg>
+      <svg id="iconPause" width="28" height="28" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+      </svg>
+    </button>
+
+    <!-- Forward 15s -->
+    <button class="ctrl-btn" id="btnForward" aria-label="Forward 15 seconds">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18 13c0 3.31-2.69 6-6 6s-6-2.69-6-6 2.69-6 6-6v4l5-5-5-5v4c-4.42 0-8 3.58-8 8s3.58 8 8 8 8-3.58 8-8h-2z"/>
+        <text x="12" y="14.5" text-anchor="middle" font-size="5.5" font-family="sans-serif" font-weight="bold" fill="currentColor">15</text>
+      </svg>
+    </button>
+
+    <!-- Next chapter -->
+    <button class="ctrl-btn" id="btnNext" aria-label="Next chapter">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M6 18l8.5-6L6 6v12zm2.5-6L14 8.5v7L8.5 12zM16 6h2v12h-2z"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Volume -->
+  <div class="volume-section">
+    <span class="volume-icon">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+      </svg>
+    </span>
+    <input type="range" class="volume-slider" id="volumeSlider" min="0" max="1" step="0.02" value="1" aria-label="Volume">
+  </div>
+
+  <!-- Repeat toggle -->
+  <button class="repeat-btn active" id="repeatBtn" aria-label="Toggle repeat">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
+    </svg>
+    <span id="repeatLabel">Repeat All</span>
+  </button>
+
+</div>
+
+<audio id="audioPlayer" preload="metadata"></audio>
+
+<script>
+  const chapters = [
+    { number: 1, title: "In which we are introduced to Winnie the Pooh and some bees, and the stories begin", url: "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/01%20In%20which%20we%20are%20introduced%20to%20Winnie%20the%20Pooh%20and%20some%20bees,%20and%20the%20stories%20begin.mp3" },
+    { number: 2, title: "In which Pooh goes Visiting and gets into a Tight Place", url: "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/02%20In%20which%20Pooh%20goes%20Visiting%20and%20gets%20into%20a%20Tight%20Place.mp3" },
+    { number: 3, title: "In which Pooh and Piglet go Hunting and nearly catch a Woozle", url: "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/03%20In%20which%20Pooh%20and%20Piglet%20go%20Hunting%20and%20nearly%20catch%20a%20Woozle.mp3" },
+    { number: 4, title: "In which Eeyore loses a Tail and Pooh finds One", url: "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/04%20In%20which%20Eeyore%20loses%20a%20Tail%20and%20Pooh%20finds%20One.mp3" },
+    { number: 5, title: "In which Piglet meets a Heffalump", url: "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/05%20In%20which%20Piglet%20meets%20a%20Heffalump.mp3" },
+    { number: 6, title: "In which Eeyore has a birthday and gets Two presents", url: "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/06%20In%20which%20Eeyore%20has%20a%20birthday%20and%20gets%20Two%20presents.mp3" },
+    { number: 7, title: "In which Kanga and Baby Roo come to the Forest, and Piglet has a Bath", url: "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/07%20In%20which%20Kanga%20and%20Baby%20Roo%20come%20to%20the%20Forest,%20and%20Piglet%20has%20a%20Bath.mp3" },
+    { number: 8, title: "In which Christopher Robin leads an Expotition to the North Pole", url: "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/08%20In%20which%20Christopher%20Robin%20leads%20an%20Expotition%20to%20the%20North%20Pole.mp3" },
+    { number: 9, title: "In which Piglet is Entirely Surrounded by Water", url: "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/09%20In%20which%20Piglet%20is%20Entirely%20Surrounded%20by%20Water.mp3" },
+    { number: 10, title: "In which Christopher Robin gives a Pooh Party, and We say Good-bye", url: "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/10%20In%20which%20Christopher%20Robin%20gives%20a%20Pooh%20Party,%20and%20We%20say%20Good-bye.mp3" }
+  ];
+
+  const audio = document.getElementById('audioPlayer');
+  const btnPlayPause = document.getElementById('btnPlayPause');
+  const iconPlay = document.getElementById('iconPlay');
+  const iconPause = document.getElementById('iconPause');
+  const btnPrev = document.getElementById('btnPrev');
+  const btnNext = document.getElementById('btnNext');
+  const btnRewind = document.getElementById('btnRewind');
+  const btnForward = document.getElementById('btnForward');
+  const progressBar = document.getElementById('progressBar');
+  const progressFill = document.getElementById('progressFill');
+  const progressThumb = document.getElementById('progressThumb');
+  const timeElapsed = document.getElementById('timeElapsed');
+  const timeDuration = document.getElementById('timeDuration');
+  const volumeSlider = document.getElementById('volumeSlider');
+  const repeatBtn = document.getElementById('repeatBtn');
+  const repeatLabel = document.getElementById('repeatLabel');
+  const chapterNumber = document.getElementById('chapterNumber');
+  const chapterTitle = document.getElementById('chapterTitle');
+  const resumeNotice = document.getElementById('resumeNotice');
+
+  let currentIndex = 0;
+  let repeatAll = true;
+  let isSeeking = false;
+
+  function formatTime(s) {
+    if (isNaN(s) || s < 0) return '0:00';
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return m + ':' + String(sec).padStart(2, '0');
+  }
+
+  function loadChapter(index, autoplay, seekTo) {
+    currentIndex = index;
+    const ch = chapters[index];
+    chapterNumber.textContent = 'Chapter ' + ch.number;
+    chapterTitle.textContent = ch.title;
+    audio.src = ch.url;
+    audio.load();
+    if (seekTo) {
+      audio.addEventListener('loadedmetadata', function onMeta() {
+        audio.currentTime = seekTo;
+        audio.removeEventListener('loadedmetadata', onMeta);
+      });
+    }
+    if (autoplay) {
+      audio.play().catch(() => {});
+    }
+    updateMediaSession();
+    savePosition();
+  }
+
+  function setPlayingState(playing) {
+    iconPlay.style.display = playing ? 'none' : '';
+    iconPause.style.display = playing ? '' : 'none';
+    btnPlayPause.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+  }
+
+  function updateProgress() {
+    if (!isSeeking && audio.duration) {
+      const pct = (audio.currentTime / audio.duration) * 100;
+      progressFill.style.width = pct + '%';
+      progressThumb.style.left = pct + '%';
+      timeElapsed.textContent = formatTime(audio.currentTime);
+      timeDuration.textContent = formatTime(audio.duration);
+    }
+  }
+
+  // Seek on progress bar
+  function seekTo(e) {
+    const rect = progressBar.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const pct = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    if (audio.duration) {
+      audio.currentTime = pct * audio.duration;
+    }
+    const p = pct * 100;
+    progressFill.style.width = p + '%';
+    progressThumb.style.left = p + '%';
+  }
+
+  progressBar.addEventListener('mousedown', (e) => { isSeeking = true; seekTo(e); });
+  progressBar.addEventListener('touchstart', (e) => { isSeeking = true; seekTo(e); }, { passive: true });
+  document.addEventListener('mousemove', (e) => { if (isSeeking) seekTo(e); });
+  document.addEventListener('touchmove', (e) => { if (isSeeking) seekTo(e); }, { passive: true });
+  document.addEventListener('mouseup', () => { isSeeking = false; });
+  document.addEventListener('touchend', () => { isSeeking = false; });
+
+  // Audio events
+  audio.addEventListener('timeupdate', () => {
+    updateProgress();
+    if (!isSeeking) savePosition();
+  });
+
+  audio.addEventListener('loadedmetadata', () => {
+    timeDuration.textContent = formatTime(audio.duration);
+  });
+
+  audio.addEventListener('play', () => setPlayingState(true));
+  audio.addEventListener('pause', () => setPlayingState(false));
+
+  audio.addEventListener('ended', () => {
+    if (currentIndex < chapters.length - 1) {
+      loadChapter(currentIndex + 1, true);
+    } else if (repeatAll) {
+      loadChapter(0, true);
+    } else {
+      setPlayingState(false);
+    }
+  });
+
+  // Controls
+  btnPlayPause.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play().catch(() => {});
+    } else {
+      audio.pause();
+    }
+  });
+
+  btnPrev.addEventListener('click', () => {
+    if (audio.currentTime > 3 && currentIndex === (currentIndex)) {
+      audio.currentTime = 0;
+    } else {
+      const idx = Math.max(0, currentIndex - 1);
+      loadChapter(idx, !audio.paused);
+    }
+  });
+
+  btnNext.addEventListener('click', () => {
+    const idx = Math.min(chapters.length - 1, currentIndex + 1);
+    loadChapter(idx, !audio.paused);
+  });
+
+  btnRewind.addEventListener('click', () => {
+    audio.currentTime = Math.max(0, audio.currentTime - 15);
+  });
+
+  btnForward.addEventListener('click', () => {
+    audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + 15);
+  });
+
+  volumeSlider.addEventListener('input', () => {
+    audio.volume = volumeSlider.value;
+  });
+
+  repeatBtn.addEventListener('click', () => {
+    repeatAll = !repeatAll;
+    repeatBtn.classList.toggle('active', repeatAll);
+    repeatLabel.textContent = repeatAll ? 'Repeat All' : 'Play Once';
+  });
+
+  // localStorage
+  function savePosition() {
+    localStorage.setItem('pooh_chapter', currentIndex);
+    localStorage.setItem('pooh_time', audio.currentTime);
+  }
+
+  function loadSavedPosition() {
+    const savedChapter = localStorage.getItem('pooh_chapter');
+    const savedTime = parseFloat(localStorage.getItem('pooh_time') || '0');
+    if (savedChapter !== null) {
+      const idx = parseInt(savedChapter, 10);
+      if (idx >= 0 && idx < chapters.length) {
+        if (savedTime > 2) {
+          resumeNotice.textContent = 'Resuming Chapter ' + chapters[idx].number;
+          resumeNotice.classList.add('visible');
+          setTimeout(() => resumeNotice.classList.remove('visible'), 3000);
+        }
+        loadChapter(idx, false, savedTime > 2 ? savedTime : 0);
+        return;
+      }
+    }
+    loadChapter(0, false);
+  }
+
+  // Media Session API
+  function updateMediaSession() {
+    if (!('mediaSession' in navigator)) return;
+    const ch = chapters[currentIndex];
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: 'Chapter ' + ch.number + ': ' + ch.title,
+      artist: 'A.A. Milne',
+      album: 'Winnie the Pooh',
+      artwork: [{ src: 'https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/Favicon.png', sizes: '512x512', type: 'image/png' }]
+    });
+    navigator.mediaSession.setActionHandler('play', () => audio.play());
+    navigator.mediaSession.setActionHandler('pause', () => audio.pause());
+    navigator.mediaSession.setActionHandler('previoustrack', () => btnPrev.click());
+    navigator.mediaSession.setActionHandler('nexttrack', () => btnNext.click());
+    navigator.mediaSession.setActionHandler('seekbackward', (d) => {
+      audio.currentTime = Math.max(0, audio.currentTime - (d.seekOffset || 15));
+    });
+    navigator.mediaSession.setActionHandler('seekforward', (d) => {
+      audio.currentTime = Math.min(audio.duration || 0, audio.currentTime + (d.seekOffset || 15));
+    });
+  }
+
+  // Init
+  loadSavedPosition();
+</script>
+</body>
+</html>

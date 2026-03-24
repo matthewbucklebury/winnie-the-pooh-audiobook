@@ -1,0 +1,15 @@
+{
+  "name": "Winnie the Pooh",
+  "short_name": "Pooh",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#2D5F2D",
+  "icons": [
+    {
+      "src": "Favicon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
