@@ -1,0 +1,58 @@
+{
+  "title": "Winnie the Pooh",
+  "baseUrl": "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook",
+  "coverArt": "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/Favicon.png",
+  "favicon": "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/Favicon.png",
+  "chapters": [
+    {
+      "number": 1,
+      "title": "In which we are introduced to Winnie the Pooh and some bees, and the stories begin",
+      "url": "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/01%20In%20which%20we%20are%20introduced%20to%20Winnie%20the%20Pooh%20and%20some%20bees,%20and%20the%20stories%20begin.mp3"
+    },
+    {
+      "number": 2,
+      "title": "In which Pooh goes Visiting and gets into a Tight Place",
+      "url": "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/02%20In%20which%20Pooh%20goes%20Visiting%20and%20gets%20into%20a%20Tight%20Place.mp3"
+    },
+    {
+      "number": 3,
+      "title": "In which Pooh and Piglet go Hunting and nearly catch a Woozle",
+      "url": "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/03%20In%20which%20Pooh%20and%20Piglet%20go%20Hunting%20and%20nearly%20catch%20a%20Woozle.mp3"
+    },
+    {
+      "number": 4,
+      "title": "In which Eeyore loses a Tail and Pooh finds One",
+      "url": "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/04%20In%20which%20Eeyore%20loses%20a%20Tail%20and%20Pooh%20finds%20One.mp3"
+    },
+    {
+      "number": 5,
+      "title": "In which Piglet meets a Heffalump",
+      "url": "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/05%20In%20which%20Piglet%20meets%20a%20Heffalump.mp3"
+    },
+    {
+      "number": 6,
+      "title": "In which Eeyore has a birthday and gets Two presents",
+      "url": "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/06%20In%20which%20Eeyore%20has%20a%20birthday%20and%20gets%20Two%20presents.mp3"
+    },
+    {
+      "number": 7,
+      "title": "In which Kanga and Baby Roo come to the Forest, and Piglet has a Bath",
+      "url": "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/07%20In%20which%20Kanga%20and%20Baby%20Roo%20come%20to%20the%20Forest,%20and%20Piglet%20has%20a%20Bath.mp3"
+    },
+    {
+      "number": 8,
+      "title": "In which Christopher Robin leads an Expotition to the North Pole",
+      "url": "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/08%20In%20which%20Christopher%20Robin%20leads%20an%20Expotition%20to%20the%20North%20Pole.mp3"
+    },
+    {
+      "number": 9,
+      "title": "In which Piglet is Entirely Surrounded by Water",
+      "url": "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/09%20In%20which%20Piglet%20is%20Entirely%20Surrounded%20by%20Water.mp3"
+    },
+    {
+      "number": 10,
+      "title": "In which Christopher Robin gives a Pooh Party, and We say Good-bye",
+      "url": "https://matthewbucklebury.github.io/winnie-the-pooh-audiobook/10%20In%20which%20Christopher%20Robin%20gives%20a%20Pooh%20Party,%20and%20We%20say%20Good-bye.mp3"
+    }
+  ]
+}
